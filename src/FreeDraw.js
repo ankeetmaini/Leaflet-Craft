@@ -588,4 +588,4 @@ if (typeof window !== "undefined") {
   FreeDraw.ALL = ALL;
 }
 
-export * from "../integrations";
+export * from "../integrations/index";

@@ -38,7 +38,6 @@ module.exports = {
     }
   ],
   plugins: [
-    multiEntry(),
     resolve(),
     commonjs({
       namedExports: {

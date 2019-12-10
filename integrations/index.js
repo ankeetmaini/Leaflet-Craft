@@ -1,3 +1,3 @@
-import ReactFreedraw from "./react/Freedraw";
+import ReactFreedraw from "./react/Freedraw.jsx";
 
-export { ReactFreedraw };
+export { ReactFreedraw as ReactFreedrawWrapper };
