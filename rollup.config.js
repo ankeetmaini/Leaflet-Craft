@@ -3,10 +3,9 @@ import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import postcss from "rollup-plugin-postcss";
-import multiEntry from "rollup-plugin-multi-entry";
 
 module.exports = {
-  input: ["src/FreeDraw.js", "implementations/react/FreeDraw.jsx"],
+  input: ["src/FreeDraw.js"],
   output: [
     {
       file: "dist/leaflet-freedraw.cjs.js",
@@ -86,9 +85,7 @@ module.exports = {
           "complement",
           "identical"
         ],
-        "node_modules/react-dom/index.js": [
-          "createPortal"
-        ]
+        "node_modules/react-dom/index.js": ["createPortal"]
       }
     }),
     postcss({

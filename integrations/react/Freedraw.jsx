@@ -1,5 +1,5 @@
-import LeafletFreedraw, { clickUndo, clickRedo } from '../../src/FreeDraw';
-import { MapLayer, withLeaflet } from 'react-leaflet';
+import LeafletFreedraw, { clickUndo, clickRedo } from "../../src/FreeDraw";
+import { MapLayer, withLeaflet } from "react-leaflet";
 
 class FreeCraft extends MapLayer {
   createLeafletElement(props) {
@@ -9,14 +9,14 @@ class FreeCraft extends MapLayer {
   updateLeafletElement(fromProps, toProps) {
     if (fromProps.showUndoRedoBar !== toProps.showUndoRedoBar) {
       this.leafletElement.toggleUndoRedoBar(toProps.showUndoRedoBar);
-      if(!toProps.showUndoRedoBar) {
+      if (!toProps.showUndoRedoBar) {
         this.leafletElement.mode(0);
       }
     }
 
     if (fromProps.showControlBar !== toProps.showControlBar) {
       this.leafletElement.toggleControlBar(toProps.showControlBar);
-      if(!toProps.showControlBar) {
+      if (!toProps.showControlBar) {
         this.leafletElement.mode(0);
       }
     }
@@ -33,8 +33,8 @@ class FreeCraft extends MapLayer {
   }
 
   attachEvents(map) {
-    this.leafletElement.on('markers', e => {
-      if (e.eventType === 'create') {
+    this.leafletElement.on("markers", e => {
+      if (e.eventType === "create") {
         clickUndo(map);
         clickRedo(map);
       }
@@ -53,6 +53,6 @@ class FreeCraft extends MapLayer {
   }
 }
 
-export const FreeDraw =  withLeaflet(FreeCraft);
+export const FreeDraw = withLeaflet(FreeCraft);
 
 export default withLeaflet(FreeCraft);
