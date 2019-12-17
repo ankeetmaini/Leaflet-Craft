@@ -1,19 +1,19 @@
-import "regenerator-runtime/runtime";
-import "./styles/app.css";
+import 'regenerator-runtime/runtime';
+import './styles/app.css';
 
-import { FeatureGroup, Point } from "leaflet";
-import { select } from "d3-selection";
-import { line, curveMonotoneX } from "d3-shape";
-import Set from "es6-set";
-import WeakMap from "es6-weak-map";
-import Symbol from "es6-symbol";
-import createPolygon from "turf-polygon";
-import { compose, head } from "ramda";
-import * as turf from "@turf/helpers";
-import pointsWithinPolygon from "@turf/points-within-polygon";
-import { updateFor } from "./helpers/Layer";
-import { createFor, removeFor, clearFor } from "./helpers/Polygon";
-import { latLngsToTuple } from "./helpers/Utils";
+import { FeatureGroup, Point } from 'leaflet';
+import { select } from 'd3-selection';
+import { line, curveMonotoneX } from 'd3-shape';
+import Set from 'es6-set';
+import WeakMap from 'es6-weak-map';
+import Symbol from 'es6-symbol';
+import createPolygon from 'turf-polygon';
+import { compose, head } from 'ramda';
+import * as turf from '@turf/helpers';
+import pointsWithinPolygon from '@turf/points-within-polygon';
+import { updateFor } from './helpers/Layer';
+import { createFor, removeFor, clearFor } from './helpers/Polygon';
+import { latLngsToTuple } from './helpers/Utils';
 import {
   CREATE,
   EDIT,
@@ -24,22 +24,22 @@ import {
   EDIT_APPEND,
   NONE,
   ALL,
-  modeFor
-} from "./helpers/Flags";
-import simplifyPolygon from "./helpers/Simplify";
-import UndoRedo from "./helpers/UndoRedo";
-import PubSub from "./helpers/PubSub";
+  modeFor,
+} from './helpers/Flags';
+import simplifyPolygon from './helpers/Simplify';
+import UndoRedo from './helpers/UndoRedo';
+import PubSub from './helpers/PubSub';
 import {
   maintainStackStates,
   undoMainStack,
   undoStackObject,
   redoMainStack,
   redoStackObject,
-  mergedPolygonsMap
-} from "./helpers/UndoRedo";
-import { customControl } from "./helpers/toolbar";
-import { undoRedoControl } from "./helpers/UndoRedoToolbar";
-import { undoHandler, redoHandler } from "./helpers/Handlers";
+  mergedPolygonsMap,
+} from './helpers/UndoRedo';
+import { customControl } from './helpers/toolbar';
+import { undoRedoControl } from './helpers/UndoRedoToolbar';
+import { undoHandler, redoHandler } from './helpers/Handlers';
 
 /**
  * @constant polygons
@@ -73,40 +73,40 @@ export const defaultOptions = {
   onEditStart: () => {},
   onEditEnd: () => {},
   onRemoveStart: () => {},
-  onRemoveEnd: () => {}
+  onRemoveEnd: () => {},
 };
 
 /**
  * @constant instanceKey
  * @type {Symbol}
  */
-export const instanceKey = Symbol("freedraw/instance");
+export const instanceKey = Symbol('freedraw/instance');
 
 /**
  * @constant modesKey
  * @type {Symbol}
  */
-export const modesKey = Symbol("freedraw/modes");
+export const modesKey = Symbol('freedraw/modes');
 
 /**
  * @constant notifyDeferredKey
  * @type {Symbol}
  */
-export const notifyDeferredKey = Symbol("freedraw/notify-deferred");
+export const notifyDeferredKey = Symbol('freedraw/notify-deferred');
 
 /**
  * @constant edgesKey
  * @type {Symbol}
  */
-export const edgesKey = Symbol("freedraw/edges");
-export const rawLatLngKey = Symbol("freedraw/rawLatLngs");
-export const polygonID = Symbol("freedraw/polygonID");
-export const polygonArea = Symbol("freedraw/polygonArea");
+export const edgesKey = Symbol('freedraw/edges');
+export const rawLatLngKey = Symbol('freedraw/rawLatLngs');
+export const polygonID = Symbol('freedraw/polygonID');
+export const polygonArea = Symbol('freedraw/polygonArea');
 /**
  * @constant cancelKey
  * @type {Symbol}
  */
-const cancelKey = Symbol("freedraw/cancel");
+const cancelKey = Symbol('freedraw/cancel');
 
 export default class FreeDraw extends FeatureGroup {
   /**
@@ -162,13 +162,13 @@ export default class FreeDraw extends FeatureGroup {
 
     // Instantiate the SVG layer that sits on top of the map.
     const svg = (this.svg = select(map._container)
-      .append("svg")
-      .classed("free-draw", true)
-      .attr("width", "100%")
-      .attr("height", "100%")
-      .style("pointer-events", "none")
-      .style("z-index", "1001")
-      .style("position", "relative"));
+      .append('svg')
+      .classed('free-draw', true)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .style('pointer-events', 'none')
+      .style('z-index', '1001')
+      .style('position', 'relative'));
 
     // Set the mouse events.
     this.listenForEvents(map, svg, this.options);
@@ -177,19 +177,19 @@ export default class FreeDraw extends FeatureGroup {
       this.history = UndoRedo(map);
       // Set Undo Redo Listeners
       this.history.attachListeners();
-      pubSub.subscribe("Add_Undo_Redo", maintainStackStates);
+      pubSub.subscribe('Add_Undo_Redo', maintainStackStates);
       if (this.options.showUndoRedoBar) {
         //  map.addControl(new undoRedoControl(this.options));
         this.toggleUndoRedoBar(true);
       }
     }
 
-    pubSub.subscribe("create-start", this.options.onCreateStart);
-    pubSub.subscribe("create-end", this.options.onCreateEnd);
-    pubSub.subscribe("edit-start", this.options.onEditStart);
-    pubSub.subscribe("edit-end", this.options.onEditEnd);
-    pubSub.subscribe("remove-start", this.options.onRemoveStart);
-    pubSub.subscribe("remove-end", this.options.onRemoveEnd);
+    pubSub.subscribe('create-start', this.options.onCreateStart);
+    pubSub.subscribe('create-end', this.options.onCreateEnd);
+    pubSub.subscribe('edit-start', this.options.onEditStart);
+    pubSub.subscribe('edit-end', this.options.onEditEnd);
+    pubSub.subscribe('remove-start', this.options.onRemoveStart);
+    pubSub.subscribe('remove-end', this.options.onRemoveEnd);
 
     if (this.options.showControlBar) {
       //  map.addControl(new customControl(this.options));
@@ -233,9 +233,9 @@ export default class FreeDraw extends FeatureGroup {
   create(latLngs, options = { concavePolygon: false, simplifyFactor: 0 }) {
     const created = createFor(this.map, latLngsToTuple(latLngs), {
       ...this.options,
-      ...options
+      ...options,
     });
-    pubSub.publish("create-end");
+    pubSub.publish('create-end');
     // updateFor(this.map, "create");
     return created;
   }
@@ -258,7 +258,7 @@ export default class FreeDraw extends FeatureGroup {
    */
   clear() {
     clearFor(this.map);
-    updateFor(this.map, "clear");
+    updateFor(this.map, 'clear');
     undoMainStack.clear();
     redoMainStack.clear();
     undoStackObject.clear();
@@ -273,7 +273,7 @@ export default class FreeDraw extends FeatureGroup {
    */
   mode(mode = null) {
     // Set mode when passed `mode` is numeric, and then yield the current mode.
-    typeof mode === "number" && modeFor(this.map, mode, this.options);
+    typeof mode === 'number' && modeFor(this.map, mode, this.options);
     return this.map[modesKey];
   }
 
@@ -284,7 +284,7 @@ export default class FreeDraw extends FeatureGroup {
     this.map[modesKey] = mode;
 
     // Fire the updated mode.
-    this.map[instanceKey].fire("mode", { mode });
+    this.map[instanceKey].fire('mode', { mode });
   }
 
   /**
@@ -330,7 +330,7 @@ export default class FreeDraw extends FeatureGroup {
         const lineIterator = this.createPath(
           svg,
           map.latLngToContainerPoint(event.latlng),
-          options.strokeWidth
+          options.strokeWidth,
         );
         const mouseMove = event => {
           // Resolve the pixel point to the latitudinal and longitudinal equivalent.
@@ -344,28 +344,28 @@ export default class FreeDraw extends FeatureGroup {
         };
 
         // Create the path when the user moves their cursor.
-        map.on("mousemove touchmove", mouseMove);
+        map.on('mousemove touchmove', mouseMove);
 
         const mouseUp = () => {
           // Remove the ability to invoke `cancel`.
           map[cancelKey] = () => {};
 
           // Stop listening to the events.
-          map.off("mouseup", mouseUp);
-          map.off("mousemove", mouseMove);
-          "body" in document &&
-            document.body.removeEventListener("mouseleave", mouseUp);
+          map.off('mouseup', mouseUp);
+          map.off('mousemove', mouseMove);
+          'body' in document &&
+            document.body.removeEventListener('mouseleave', mouseUp);
 
           // Clear the SVG canvas.
-          svg.selectAll("*").remove();
+          svg.selectAll('*').remove();
 
           this.colorMarkersTobeDeleted(latLngs);
         };
 
         // Clear up the events when the user releases the mouse.
-        map.on("mouseup touchend", mouseUp);
-        "body" in document &&
-          document.body.addEventListener("mouseleave", mouseUp);
+        map.on('mouseup touchend', mouseUp);
+        'body' in document &&
+          document.body.addEventListener('mouseleave', mouseUp);
 
         // Setup the function to invoke when `cancel` has been invoked.
         map[cancelKey] = () => mouseUp({}, false);
@@ -389,7 +389,7 @@ export default class FreeDraw extends FeatureGroup {
       const lineIterator = this.createPath(
         svg,
         map.latLngToContainerPoint(event.latlng),
-        options.strokeWidth
+        options.strokeWidth,
       );
 
       /**
@@ -409,7 +409,7 @@ export default class FreeDraw extends FeatureGroup {
       };
 
       // Create the path when the user moves their cursor.
-      map.on("mousemove touchmove", mouseMove);
+      map.on('mousemove touchmove', mouseMove);
 
       /**
        * @method mouseUp
@@ -421,19 +421,19 @@ export default class FreeDraw extends FeatureGroup {
         map[cancelKey] = () => {};
 
         // Stop listening to the events.
-        map.off("mouseup", mouseUp);
-        map.off("mousemove", mouseMove);
-        "body" in document &&
-          document.body.removeEventListener("mouseleave", mouseUp);
+        map.off('mouseup', mouseUp);
+        map.off('mousemove', mouseMove);
+        'body' in document &&
+          document.body.removeEventListener('mouseleave', mouseUp);
 
         // Clear the SVG canvas.
-        svg.selectAll("*").remove();
+        svg.selectAll('*').remove();
 
         if (create) {
           // ...And finally if we have any lat/lngs in our set then we can attempt to
           // create the polygon.
           if (latLngs.size >= 3) {
-            const response = await pubSub.publish("create-start");
+            const response = await pubSub.publish('create-start');
             if (response && response.interrupt) {
               return;
             }
@@ -441,8 +441,8 @@ export default class FreeDraw extends FeatureGroup {
             createFor(map, latLngsToTuple(Array.from(latLngs)), options);
 
             // Finally invoke the callback for the polygon regions.
-            updateFor(map, "create");
-            pubSub.publish("create-end");
+            updateFor(map, 'create');
+            pubSub.publish('create-end');
 
             // Exit the `CREATE` mode if the options permit it.
             options.leaveModeAfterCreate && this.mode(this.mode() ^ CREATE);
@@ -451,15 +451,15 @@ export default class FreeDraw extends FeatureGroup {
       };
 
       // Clear up the events when the user releases the mouse.
-      map.on("mouseup touchend", mouseUp);
-      "body" in document &&
-        document.body.addEventListener("mouseleave", mouseUp);
+      map.on('mouseup touchend', mouseUp);
+      'body' in document &&
+        document.body.addEventListener('mouseleave', mouseUp);
 
       // Setup the function to invoke when `cancel` has been invoked.
       map[cancelKey] = () => mouseUp({}, false);
     };
 
-    map.on("mousedown touchstart", mouseDown);
+    map.on('mousedown touchstart', mouseDown);
   }
 
   colorMarkersTobeDeleted(latLngs) {
@@ -470,7 +470,7 @@ export default class FreeDraw extends FeatureGroup {
     const toTurfPolygon = compose(
       createPolygon,
       x => [x],
-      x => [...x, head(x)]
+      x => [...x, head(x)],
     );
     const turfPolygon = toTurfPolygon(Array.from(latLngs));
 
@@ -485,7 +485,7 @@ export default class FreeDraw extends FeatureGroup {
       if (containedMarkers.features.length !== 0) {
         const selectedMarkers = [];
         containedMarkers.features.map(f =>
-          selectedMarkers.push(f.geometry.coordinates)
+          selectedMarkers.push(f.geometry.coordinates),
         );
         const newlatLngArr = latLngArr.filter(ll => {
           return !selectedMarkers.some(sm => sm === ll);
@@ -503,14 +503,14 @@ export default class FreeDraw extends FeatureGroup {
             this.options,
             true,
             p[polygonID],
-            0
+            0,
           );
         } else {
           undoMainStack.push(p[polygonID]);
           undoStackObject[p[polygonID]].push(null);
         }
       }
-      pubSub.publish("edit-end");
+      pubSub.publish('edit-end');
       return p;
     });
   }
@@ -535,12 +535,12 @@ export default class FreeDraw extends FeatureGroup {
       lastPoint = toPoint;
       // Draw SVG line based on the last movement of the mouse's position.
       svg
-        .append("path")
-        .classed("leaflet-line", true)
-        .attr("d", lineFunction(lineData))
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-width", strokeWidth);
+        .append('path')
+        .classed('leaflet-line', true)
+        .attr('d', lineFunction(lineData))
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
+        .attr('stroke-width', strokeWidth);
     };
   }
 }
@@ -562,8 +562,8 @@ export {
   NONE,
   ALL,
   DELETEMARKERS,
-  DELETEPOINT
-} from "./helpers/Flags";
+  DELETEPOINT,
+} from './helpers/Flags';
 
 export const clickUndo = map => {
   undoHandler(map);
@@ -573,19 +573,4 @@ export const clickRedo = map => {
   redoHandler(map);
 };
 
-if (typeof window !== "undefined") {
-  // Attach to the `window` as `FreeDraw` if it exists, as this would prevent `new FreeDraw.default` when
-  // using the web version.
-  window.FreeDraw = FreeDraw;
-  FreeDraw.CREATE = CREATE;
-  FreeDraw.EDIT = EDIT;
-  FreeDraw.DELETE = DELETE;
-  FreeDraw.DELETEMARKERS = DELETEMARKERS;
-  FreeDraw.DELETEPOINT = DELETEPOINT;
-  FreeDraw.APPEND = APPEND;
-  FreeDraw.EDIT_APPEND = EDIT_APPEND;
-  FreeDraw.NONE = NONE;
-  FreeDraw.ALL = ALL;
-}
-
-export * from "../integrations/index";
+export * from '../integrations/index';
